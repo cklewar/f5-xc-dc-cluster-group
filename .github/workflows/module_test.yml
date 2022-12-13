@@ -1,4 +1,4 @@
-name: F5XC DC Cluster module
+name: F5XC DC Cluster Group module
 on: workflow_dispatch
 jobs:
   f5-xc-dc-cluster-module-validate:
