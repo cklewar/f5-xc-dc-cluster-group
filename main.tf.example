@@ -1,31 +1,44 @@
 variable "project_prefix" {
   type        = string
   description = "prefix string put in front of string"
-  default = "f5xc"
+  default     = "f5xc"
 }
 
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default = "01"
+  default     = "01"
+}
+
+variable "f5xc_namespace" {
+  type    = string
+  default = "system"
 }
 
 variable "f5xc_api_p12_file" {
-  type = string
+  type    = string
 }
 
 variable "f5xc_api_url" {
-  type = string
+  type    = string
+}
+
+provider "volterra" {
+  api_p12_file = var.f5xc_api_p12_file
+  url          = var.f5xc_api_url
+  alias        = "default"
 }
 
 module "dc_cluster_group" {
   source                            = "./modules/f5xc/dc-cluster-group"
   f5xc_dc_cluster_group_name        = format("%s-dcg-%s", var.project_prefix, var.project_suffix)
-  f5xc_namespace                    = "system"
-  f5xc_api_url                      = var.f5xc_api_url
-  f5xc_api_p12_file                 = var.f5xc_api_p12_file
-  f5xc_dc_cluster_group_description = "My DC Cluster Group"
+  f5xc_namespace                    = var.f5xc_namespace
+  f5xc_dc_cluster_group_description = "F5XC DC Cluster Group regression test"
   f5xc_dc_cluster_group_labels      = {
-    "my-dc-group" : "My DC Cluster Group"
+    "my-dc-group" : format("%s-dcg-%s", var.project_prefix, var.project_suffix)
+  }
+
+  providers = {
+    volterra = volterra.default
   }
 }
